@@ -1,6 +1,18 @@
 import type React from "react";
+import { Button } from "../ui/button";
+import { useState } from "react";
 
 const Login = () => {
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -19,10 +31,39 @@ const Login = () => {
               Enter your credential to access the admin panel
             </p>
           </div>
-          <form onClick={handleSubmit}>
-            <div>
-              
+          <form
+            onClick={handleSubmit}
+            className="mt-6 w-full sm:max-w-md text-gray-600"
+          >
+            <div className="flex flex-col">
+              <label>Email</label>
+              <input
+                type="email"
+                name="email"
+                required
+                aria-required
+                placeholder="Email"
+                className="border-b-2 border-gray-300 mb-6 outline-none p-2"
+                value={formData.email}
+                onChange={handleChange}
+              />
             </div>
+            <div className="flex flex-col">
+              <label>Password</label>
+              <input
+                type="password"
+                name="password"
+                required
+                aria-required
+                placeholder="Password"
+                className="border-b-2 border-gray-300 mb-6 outline-none p-2"
+                value={formData.password}
+                onChange={handleChange}
+              />
+            </div>
+            <Button type="submit" className="w-full">
+              Login
+            </Button>
           </form>
         </div>
       </div>

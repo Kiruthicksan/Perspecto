@@ -18,6 +18,7 @@ export interface BlogData {
   _id: string;
   createdAt: string;
   subTitle: string;
+  isPublished : boolean
 }
 
 export interface CommentsData {
