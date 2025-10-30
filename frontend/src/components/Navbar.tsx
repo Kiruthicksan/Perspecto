@@ -15,7 +15,7 @@ const Navbar = () => {
       </h1>
 
       <Button onClick={() => navigate("/admin")} className="cursor-pointer">
-        Want to Publish
+        Want to Publish?
         <ChevronRight />
       </Button>
     </nav>
