@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { CommentsData } from "../BlogPage";
 import { comments_data } from "@/assets/assets";
+import CommentTable from "@/components/Admin/CommentTable";
 
 const Comments = () => {
   const [comments, setComments] = useState<CommentsData[]>([]);
@@ -59,7 +60,18 @@ const Comments = () => {
           </thead>
 
           <tbody>
-
+            {comments
+              .filter((comment) => {
+                if (fitler === "Approved") return comment.isApproved === true;
+                return comment.isApproved === false;
+              })
+              .map((c) => (
+                <CommentTable
+                  key={c._id}
+                  comment={c}
+                  fetchComments={fetchComments}
+                />
+              ))}
           </tbody>
         </table>
       </div>

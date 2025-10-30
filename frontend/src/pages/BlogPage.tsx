@@ -26,6 +26,8 @@ export interface CommentsData {
   content: string;
   isApproved: boolean;
   createdAt: string;
+  blog : BlogData
+  _id  : string
 }
 
 interface CommentFormData {
