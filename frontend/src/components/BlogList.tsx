@@ -2,6 +2,7 @@ import { useState } from "react";
 import BlogCard from "./BlogCard";
 import { blog_data, blogCategories } from "@/assets/assets";
 
+
 const BlogList = () => {
   const [currentTab, setCurrentTab] = useState("All");
 
