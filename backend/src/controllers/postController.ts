@@ -1,15 +1,19 @@
-import type { Request, Response } from "express";
+import {  type Request, type Response } from "express";
 import { Post } from "../models/postModel.js";
+import fs from "fs"
+import imageKit from "../config/imagekit.js";
+
 
 export const createPost = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    const { title, content, author, category, tags } = req.body;
+    const { title, subTitle, description, category, isPublished } = JSON.parse( req.body.blog)
+    const imageFile = req.file
+     
 
-    // --------------------- validation -----------------------
-
+    // --------------------- Validation -----------------------
     if (!title || typeof title !== "string" || title.trim().length === 0) {
       res
         .status(400)
@@ -18,20 +22,28 @@ export const createPost = async (
     }
 
     if (
-      !content ||
-      typeof content !== "string" ||
-      content.trim().length === 0
+      !subTitle ||
+      typeof subTitle !== "string" ||
+      subTitle.trim().length === 0
     ) {
-      res.status(400).json({
-        message: "Content is required and must be a non-empty string.",
-      });
+      res
+        .status(400)
+        .json({
+          message: "SubTitle is required and must be a non-empty string.",
+        });
       return;
     }
 
-    if (!author || typeof author !== "string" || author.trim().length === 0) {
-      res.status(400).json({
-        message: "Author is required and must be a non-empty string.",
-      });
+    if (
+      !description ||
+      typeof description !== "string" ||
+      description.trim().length === 0
+    ) {
+      res
+        .status(400)
+        .json({
+          message: "Description is required and must be a non-empty string.",
+        });
       return;
     }
 
@@ -40,29 +52,63 @@ export const createPost = async (
       typeof category !== "string" ||
       category.trim().length === 0
     ) {
-      res.status(400).json({
-        message: "Category is required and must be a non-empty string.",
-      });
+      res
+        .status(400)
+        .json({
+          message: "Category is required and must be a non-empty string.",
+        });
       return;
     }
 
-    if (tags && !Array.isArray(tags)) {
-      res.status(400).json({ message: "Tags must be an array of strings." });
+   
+
+    if (typeof isPublished !== "boolean") {
+      res.status(400).json({ message: "isPublished must be a boolean value." });
       return;
     }
 
+    if(!imageFile){
+      res.json(400).json({message : "Image is Required"})
+      return
+    }
+
+    const fileBuffer = fs.readFileSync(imageFile.path)
+
+    // ------------------------uploading image to imagekit logic----------------------
+    const response = await imageKit.upload({
+      file : fileBuffer,
+      fileName : imageFile.originalname,
+      folder : "/blogs"
+    })
+
+    // ---------------this is to optimize imagekit url transformation------------
+
+    const imageUrl = imageKit.url({
+      path : response.filePath,
+      transformation : [
+        {quality : "auto"},  // to auto compression
+        {format : "webp"}, // to web format
+        {width : "1280"} 
+      ]
+    })
+
+    const image = imageUrl
+
+    // --------------------- Create Post -----------------------
     const newPost = await Post.create({
-      title: title.trim(),
-      content: content.trim(),
-      author: author.trim(),
-      category: category.trim(),
-      tags,
+      title,
+      subTitle,
+      description,
+      category,
+      image,
+      isPublished,
     });
-    res.status(201).json({ message: "Post created Successfully", newPost });
+
+    res.status(201).json({ message: "Post created successfully", newPost });
   } catch (error) {
-    console.error(error);
+    console.error("Error creating post:", error);
     res.status(500).json({
-      message: "Somethin went wrong",
+      message: "Something went wrong",
       error: (error as Error).message,
     });
   }
@@ -81,16 +127,17 @@ export const getPost = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-export const getPostById = async  (req: Request, res: Response): Promise<void> => {
+export const getPostById = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
-    const slug = req.params.slug
-    const post = await Post.findOne({slug})
-    if(!post){
-      res.status(404).json({message : "Post not found "})
+    const slug = req.params.slug;
+    const post = await Post.findOne({ slug });
+    if (!post) {
+      res.status(404).json({ message: "Post not found " });
     }
 
-    res.status(200).json({message : "Post fetched successfully" ,post})
-  } catch (error) {
-    
-  }
-}
+    res.status(200).json({ message: "Post fetched successfully", post });
+  } catch (error) {}
+};

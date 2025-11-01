@@ -2,10 +2,11 @@ import mongoose, { Document, Schema } from "mongoose";
 
 export interface IPOST extends Document {
   title: string;
-  content: string;
-  author: string;
+  subTitle: string;
+  description: string;
   category: string;
-  tags: string[];
+  image: string;
+  isPublished: boolean;
   slug: string;
 }
 
@@ -15,21 +16,25 @@ const postSchema = new Schema<IPOST>(
       type: String,
       required: true,
     },
-    content: {
+    subTitle: {
+      type: String,
+    },
+    description: {
       type: String,
       required: true,
     },
-    author: {
-      type: String,
-      required: true,
-    },
+
     category: {
       type: String,
       required: true,
     },
-    tags: {
-      type: [String],
-      default: [],
+    image: {
+      type: String,
+      required: true,
+    },
+    isPublished: {
+      type: Boolean,
+      required: true,
     },
     slug: {
       type: String,
@@ -49,7 +54,7 @@ postSchema.pre("save", function (next) {
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "");
   }
-  next()
+  next();
 });
 
 export const Post = mongoose.model("Post", postSchema);
