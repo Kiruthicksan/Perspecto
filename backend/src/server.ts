@@ -3,6 +3,7 @@ import dotenv from "dotenv/config";
 import connectDb from "./config/db.js";
 import postRoutes from "./routes/postRoutes.js";
 import AdminLoginRoutes from "./routes/AdminLoginRoutes.js";
+import commentRoutes from "./routes/commentRoutes.js"
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
@@ -18,6 +19,7 @@ const port = process.env.PORT;
 
 app.use("/blogs", postRoutes);
 app.use("/auth", AdminLoginRoutes);
+app.use("/blogs", commentRoutes )
 
 const startServer = async () => {
   try {
