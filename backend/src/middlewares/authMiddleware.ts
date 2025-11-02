@@ -1,27 +1,34 @@
 import type { NextFunction, Request, Response } from "express";
-import jwt from "jsonwebtoken"
+import jwt from "jsonwebtoken";
 
 
-// this is for if needed in future. so for now ignore this
-export interface AuthenticatedRequest extends Request{
-    user : {
-        email : string
-    }
+export interface AuthenticatedRequest extends Request {
+  user?: {
+    email: string;
+    id?: string;
+  };
 }
 
-const protect = (req : Request, res : Response, next : NextFunction)=> {
-    const token = req.cookies.token
+const protect = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  try {
+    const token = req.cookies?.token;
 
-    if(!token){
-        res.status(401).json({messaged : "Authorization Denied. No Token found"})
-        return
+    if (!token) {
+      return res.status(401).json({ message: "Authorization denied. No token found." });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string)
-    if(!decoded){
-        res.status(401).json({message : "Authorization Denied. Invalid Token"})
-    }
-    next()
-}
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
 
-export default protect
+    // Optionally attach decoded user info to req
+    if (typeof decoded === "object" && decoded && "email" in decoded) {
+      req.user = { email: decoded.email as string };
+    }
+
+    next();
+  } catch (error) {
+    console.error("JWT verification error:", error);
+    return res.status(401).json({ message: "Authorization denied. Invalid or expired token." });
+  }
+};
+
+export default protect;
