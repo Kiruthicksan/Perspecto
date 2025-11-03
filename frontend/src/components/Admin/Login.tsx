@@ -2,21 +2,27 @@ import type React from "react";
 import { Button } from "../ui/button";
 import { useState } from "react";
 
+
 const Login = () => {
+
+
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit =  async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // write a logic for handlesubmit here
+   
+    
   };
 
   return (
@@ -32,7 +38,7 @@ const Login = () => {
             </p>
           </div>
           <form
-            onClick={handleSubmit}
+            onSubmit={handleSubmit}
             className="mt-6 w-full sm:max-w-md text-gray-600"
           >
             <div className="flex flex-col">
