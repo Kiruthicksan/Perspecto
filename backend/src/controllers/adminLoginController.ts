@@ -1,6 +1,8 @@
 import type { Request, Response } from "express";
 import { genrateToken } from "../utils/generateToken.js";
 import { setAuthCookie } from "../utils/setAuthCookie.js";
+import { Post } from "../models/postModel.js";
+import Comment from "../models/commentModel.js";
 
 export const adminLogin = async (
   req: Request,
@@ -23,7 +25,7 @@ export const adminLogin = async (
       res.status(400).json({
         message: "Password is Required and it must be not empty string",
       });
-      return
+      return;
     }
 
     if (
@@ -42,11 +44,37 @@ export const adminLogin = async (
       .json({ messsage: "Loggedin Successfully", user: { email } });
   } catch (error) {
     console.error(error);
-    res
-      .status(500)
-      .json({
-        message: "Something went wrong",
-        error: (error as Error).message,
-      });
+    res.status(500).json({
+      message: "Something went wrong",
+      error: (error as Error).message,
+    });
+  }
+};
+
+// ------------- admin dasboard endpoint ------------------------------
+
+export const getDashboard = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const recentBlogs = await Post.find({}).sort({ createdAt: -1 }).limit(5);
+    const blogCount = await Post.countDocuments();
+    const comments = await Comment.countDocuments();
+    const draft = await Post.countDocuments({ isPublished: true });
+
+    res.status(200).json({
+      message: "Dashboard Data fetched successfully",
+      recentBlogs,
+      blogCount,
+      comments,
+      draft,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Something went wrong",
+      error: (error as Error).message,
+    });
   }
 };

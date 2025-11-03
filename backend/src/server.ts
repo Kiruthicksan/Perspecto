@@ -18,7 +18,7 @@ app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 const port = process.env.PORT;
 
 app.use("/blogs", postRoutes);
-app.use("/auth", AdminLoginRoutes);
+app.use("/admin", AdminLoginRoutes);
 app.use("/blogs", commentRoutes )
 
 const startServer = async () => {

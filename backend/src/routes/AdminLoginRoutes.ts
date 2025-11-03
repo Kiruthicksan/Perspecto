@@ -1,9 +1,10 @@
 import express from "express"
-import { adminLogin } from "../controllers/adminLoginController.js"
+import { adminLogin, getDashboard } from "../controllers/adminLoginController.js"
 
 
 const router = express.Router()
 
-router.post("/admin/login" , adminLogin)
+router.post("/login" , adminLogin)
+router.get("/dashboard" , getDashboard)
 
 export default router

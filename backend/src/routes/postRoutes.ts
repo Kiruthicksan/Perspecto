@@ -1,5 +1,5 @@
 import express from "express"
-import { createPost, deletePost, getPost, getPostById, tooglePublish } from "../controllers/postController.js"
+import { createPost, deletePost, getAllPost, getPost, getPostById, tooglePublish } from "../controllers/postController.js"
 import upload from "../middlewares/multer.js"
 
 
@@ -10,5 +10,6 @@ router.get("/", getPost)
 router.get("/:slug", getPostById)
 router.delete("/:slug" , deletePost)
 router.put("/publish/:slug", tooglePublish)
+router.put("/admin", getAllPost)
 
 export default router

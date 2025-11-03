@@ -2,6 +2,10 @@ import { type Request, type Response } from "express";
 import { Post } from "../models/postModel.js";
 import fs from "fs";
 import imageKit from "../config/imagekit.js";
+import Comment from "../models/commentModel.js";
+
+
+// ----------------------------- endpoint for creating a blog ----------------------------
 
 export const createPost = async (
   req: Request,
@@ -106,6 +110,8 @@ export const createPost = async (
   }
 };
 
+// ----------------------- endpoint for getting the blog which are published ---------------------------
+
 export const getPost = async (req: Request, res: Response): Promise<void> => {
   try {
     const post = await Post.find({ isPublished: true });
@@ -118,6 +124,8 @@ export const getPost = async (req: Request, res: Response): Promise<void> => {
     });
   }
 };
+
+// --------------- endpoint for getting the blog by id -------------------
 
 export const getPostById = async (
   req: Request,
@@ -140,12 +148,16 @@ export const getPostById = async (
   }
 };
 
+// ------------------------- endpoint for deleting post ------------------------
 export const deletePost = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   const slug = req.params.slug;
   const post = await Post.deleteOne({ slug });
+  // need to delete comment also
+
+  await Comment.deleteMany({blog : slug})
   if (!post) {
     res.status(400).json({ message: "Blog not found" });
     return;
@@ -153,6 +165,8 @@ export const deletePost = async (
 
   res.status(200).json({ message: "Blog Deleted Successfully" });
 };
+
+// ------------------------ endpoint for admin to publish blog----------------------
 
 export const tooglePublish = async (
   req: Request,
@@ -168,6 +182,22 @@ export const tooglePublish = async (
     post.isPublished = !post.isPublished;
     await post?.save();
     res.status(200).json({ message: "Toogled Successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Somethin went wrong",
+      error: (error as Error).message,
+    });
+  }
+};
+
+
+// ---------------------------admin endpoint for getting all blogs--------------------------
+
+export const getAllPost = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const post = await Post.find().sort({createdAt: -1});
+    res.status(200).json({ message: "Post Fetched correctly", post });
   } catch (error) {
     console.error(error);
     res.status(500).json({
