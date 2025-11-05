@@ -34,7 +34,7 @@ const postSchema = new Schema<IPOST>(
     },
     isPublished: {
       type: Boolean,
-      required: true,
+      default: false
     },
     slug: {
       type: String,

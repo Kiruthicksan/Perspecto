@@ -59,10 +59,7 @@ export const createPost = async (
       return;
     }
 
-    if (typeof isPublished !== "boolean") {
-      res.status(400).json({ message: "isPublished must be a boolean value." });
-      return;
-    }
+    
 
     if (!imageFile) {
       res.status(400).json({ message: "Image is Required" });
@@ -154,11 +151,11 @@ export const deletePost = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const slug = req.params.slug;
-  const post = await Post.deleteOne({ slug });
+  const {id} = req.params;
+  const post = await Post.findByIdAndDelete(id);
   // need to delete comment also
 
-  await Comment.deleteMany({blog : slug})
+  await Comment.deleteMany({blog : id})
   if (!post) {
     res.status(400).json({ message: "Blog not found" });
     return;
@@ -174,8 +171,8 @@ export const tooglePublish = async (
   res: Response
 ): Promise<void> => {
   try {
-    const slug = req.params.slug;
-    const post = await Post.findOne({ slug });
+    const {id} = req.body;
+    const post = await Post.findById(id);
     if (!post) {
       res.status(404).json({ message: "Post not found" });
       return;

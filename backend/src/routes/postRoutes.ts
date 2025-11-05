@@ -6,11 +6,12 @@ import protect from "../middlewares/authMiddleware.js"
 
 const router = express.Router()
 
-router.post("/",upload.single("image"), protect, createPost)
+router.post("/",upload.single("image"), createPost)
 router.get("/", getPost)
+router.get("/admin", getAllPost)
 router.get("/:slug", getPostById)
-router.delete("/:slug" , deletePost)
-router.put("/publish/:slug", tooglePublish)
-router.put("/admin", getAllPost)
+router.delete("/:id" , deletePost)
+router.patch("/publish", tooglePublish)
+
 
 export default router

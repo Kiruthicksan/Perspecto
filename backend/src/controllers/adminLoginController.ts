@@ -62,14 +62,18 @@ export const getDashboard = async (
     const recentBlogs = await Post.find({}).sort({ createdAt: -1 }).limit(5);
     const blogCount = await Post.countDocuments();
     const comments = await Comment.countDocuments();
-    const draft = await Post.countDocuments({ isPublished: true });
+    const draftCount = await Post.countDocuments({ isPublished: false });
+
+    const dashboardData = {
+      recentBlogs,
+      blogs: blogCount,
+      comments,
+      drafts: draftCount,
+    };
 
     res.status(200).json({
       message: "Dashboard Data fetched successfully",
-      recentBlogs,
-      blogCount,
-      comments,
-      draft,
+      dashboardData,
     });
   } catch (error) {
     console.error(error);
@@ -81,13 +85,24 @@ export const getDashboard = async (
 };
 
 export const getUser = (req: AuthenticatedRequest, res: Response) => {
-  if(!req.user){
-    return res.status(401).json({message : "NOt authorized"})
+  if (!req.user) {
+    return res.status(401).json({ message: "NOt authorized" });
   }
-
 
   res.status(200).json({
     success: true,
-    user: req.user.email, 
+    user: req.user.email,
   });
-}
+};
+
+export const logout = async (req: Request, res: Response) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+     path: "/",
+  });
+
+  res.status(200).json({message : "Logged Out successfully"})
+};
