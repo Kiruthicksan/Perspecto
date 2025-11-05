@@ -2,12 +2,15 @@ import Navbar from "@/components/Navbar";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import moment from "moment";
-import { assets, blog_data, comments_data } from "@/assets/assets";
+import { assets } from "@/assets/assets";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import Footer from "@/components/Footer";
 import Loader from "@/components/Loader";
+
+import { api } from "@/service/api";
+import { toast } from "sonner";
 
 
 export interface BlogData {
@@ -15,6 +18,7 @@ export interface BlogData {
   description: string;
   category: string;
   image: string;
+  slug : string
   _id: string;
   createdAt: string;
   subTitle: string;
@@ -36,32 +40,57 @@ interface CommentFormData {
 }
 
 const BlogPage = () => {
-  const { id } = useParams<{ id: string }>();
+  const { slug } = useParams<{ slug: string }>();
   const [blog, setBlog] = useState<BlogData | null>(null);
   const [comments, setComments] = useState<CommentsData[]>([]);
-  const [formData, setformData] = useState<CommentFormData>({
+  const [formData, setFormData] = useState<CommentFormData>({
     name: "",
     content: "",
   });
 
+  const payloadComment =  {
+    blog : blog?._id,
+    name : formData.name,
+    content : formData.content
+  }
+
+ 
+
   const fetchBlogData = async () => {
-    const data = blog_data.find((item) => item._id === id);
-    setBlog(data || null);
+    try {
+      const {data} = await api.get(`/blogs/${slug}`)
+      setBlog(data.post)
+    } catch (error) {
+      console.error(error)
+    }
   };
 
+  useEffect(() => {
+    if (slug) fetchBlogData();
+  }, [slug]);
+
   const fetchComments = async () => {
-    setComments(comments_data);
+    const {data} = await api.post("/blogs/comment",{blogId : blog?._id})
+    setComments(data.comment)
+    
   };
 
   const handleAddComments = async (e: React.FormEvent) => {
     e.preventDefault();
+    const {data} = await api.post("/blogs/add/comment" , payloadComment)
+    if(data){
+      setFormData({name : "", content: ""})
+      return toast.success("Comments Added for review")
+    
+    }
+   
   };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setformData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   useEffect(() => {

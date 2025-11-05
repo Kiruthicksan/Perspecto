@@ -1,18 +1,12 @@
 import { useEffect, useState } from "react";
-import type { BlogData } from "../BlogPage";
-import { blog_data } from "@/assets/assets";
+
 import TableData from "@/components/Admin/TableData";
+import { useBlogStore } from "@/store/useBlogStore";
 
 const ListBlog = () => {
-  const [blogs, setBlogs] = useState<BlogData[]>([]);
-
-  const fetchBlogs = async () => {
-    setBlogs(blog_data);
-  };
-
-  useEffect(() => {
-    fetchBlogs(), [];
-  });
+  
+  const {allBlogs, fetchAllBlogs} = useBlogStore()
+  
 
   return (
     <div className="flex-1 pt-5 px-5 sm:pt-12 sm:pl-16 bg-blue-50/50">
@@ -29,8 +23,8 @@ const ListBlog = () => {
               </tr>
             </thead>
             <tbody>
-              {blogs.map((blog, index) => (
-                  <TableData key={blog._id} blog={blog} fetchBlogs={fetchBlogs} index={index + 1}/>
+              {allBlogs.map((blog, index) => (
+                  <TableData key={blog._id} blog={blog} fetchBlogs={fetchAllBlogs} index={index + 1}/>
               ))}
             </tbody>
           </table>

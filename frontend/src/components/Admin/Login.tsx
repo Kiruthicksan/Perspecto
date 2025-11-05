@@ -2,27 +2,35 @@ import type React from "react";
 import { Button } from "../ui/button";
 import { useState } from "react";
 
+import { toast } from "sonner";
+
+
+import { useAuthStore } from "@/store/useAuthStore";
 
 const Login = () => {
-
-
-
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
 
+ 
 
+  const { login } = useAuthStore();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit =  async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-   
-    
+    const success = await login(formData.email, formData.password);
+    if (success) {
+      toast.success("Logged In Sucessfully");
+      
+    } else {
+      toast.error("Invalid Credentials");
+    }
   };
 
   return (

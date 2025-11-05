@@ -1,9 +1,11 @@
-import { Search, Stars } from "lucide-react";
+import { Stars } from "lucide-react";
 import gradientBackground from "../assets/gradientBackground.png";
-import { Input } from "./ui/input";
 
 
 const HeroSection = () => {
+
+
+
   return (
     <div className="mx-8 sm:mx-16 xl:mx-24 relative">
       <div className="text-center mt-20 mb-8">
@@ -17,11 +19,11 @@ const HeroSection = () => {
           Your own <span className="text-primary">blogging</span> <br />{" "}
           Platform{" "}
         </h1>
-        <p className="my-6 sm:my-8 max-w-2xl m-auto max-sm:text-xs text-gray-500">Your voice. Your space. Write what you feel, share what you love, and let your story unfold — one post at a time.</p>
-        <form className="max-w-lg mx-auto relative ">
-            <Input type="text" placeholder="Search for blogs" required  className="border border-gray-300 bg-white"/>
-            <Search className="absolute top-1/2 -translate-1/2 right-4 w-4 cursor-pointer " />
-        </form>
+        <p className="my-6 sm:my-8 max-w-2xl m-auto max-sm:text-xs text-gray-500">
+          Your voice. Your space. Write what you feel, share what you love, and
+          let your story unfold — one post at a time.
+        </p>
+        
       </div>
       <img
         src={gradientBackground}

@@ -1,10 +1,16 @@
 import { useState } from "react";
 import BlogCard from "./BlogCard";
-import { blog_data, blogCategories } from "@/assets/assets";
+import { blogCategories } from "@/assets/assets";
+import { useBlogStore } from "@/store/useBlogStore";
 
 
 const BlogList = () => {
   const [currentTab, setCurrentTab] = useState("All");
+
+  const {blogs} = useBlogStore()
+
+ 
+
 
   return (
     <div>
@@ -26,7 +32,7 @@ const BlogList = () => {
         ))}
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-8 mb-24 mx-8 sm:mx-16 xl:mx-40 ">
-        {blog_data
+        {blogs
           .filter(
             (item) => item.category === currentTab || currentTab === "All"
           )

@@ -6,6 +6,7 @@ export interface Blog {
   category: string;
   image: string;
   _id: string;
+  slug : string
  
 }
 
@@ -14,12 +15,12 @@ interface BlogCardProps {
 }
 
 const BlogCard: React.FC<BlogCardProps> = ({ blog }) => {
-  const { title, description, category, image, _id } = blog;
+  const { title, description, category, image, slug } = blog;
 
   const navigate = useNavigate();
   return (
     <div
-      onClick={() => navigate(`/blog/${_id}`)}
+      onClick={() => navigate(`/blogs/${slug}`)}
       className="w-full rounded-lg overflow-hidden shadow hover:scale-102 hover:shadow-primary/25 duration-300 cursor-pointer"
     >
       <img src={image} alt="image" className="aspect-video" />
@@ -28,7 +29,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ blog }) => {
       </span>
       <div className="p-5">
         <h5 className="mb-2 font-medium text-gray-900">{title}</h5>
-        <p className="mb-3 text-xs text-gray-600">{description.slice(0, 80)}</p>
+        <p className="mb-3 text-xs text-gray-600" dangerouslySetInnerHTML={{__html : blog.description.slice(0,80)}}></p>
       </div>
     </div>
   );

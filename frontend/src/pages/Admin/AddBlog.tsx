@@ -3,6 +3,14 @@ import { Input } from "@/components/ui/input";
 import React, { useEffect, useRef, useState } from "react";
 import Quill from "quill";
 import { Button } from "@/components/ui/button";
+import { api } from "@/service/api";
+import { toast } from "sonner";
+
+export interface FormData {
+  title: string;
+  subTitle: string;
+  category: string;
+}
 
 const AddBlog = () => {
   const editorRef = useRef<HTMLDivElement | null>(null);
@@ -11,12 +19,12 @@ const AddBlog = () => {
   const [formData, setFormData] = useState({
     title: "",
     subTitle: "",
-    description: "",
     category: "Startup",
   });
 
   const [image, setImage] = useState<File | null>(null);
-  const [isPublished, setIsPublished] = useState(false)
+  const [isPublished, setIsPublished] = useState(false);
+  const [isAdding, setIsAdding] = useState<boolean>(false);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -25,12 +33,40 @@ const AddBlog = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    try {
 
-    // logic here
+      setIsAdding(true)
+      const blog = {
+        title: formData.title,
+        subTitle: formData.subTitle,
+        description: quillRef.current?.root.innerHTML,
+        category: formData.category,
+        isPublished
+      };
+
+      const form = new FormData();
+      form.append("blog", JSON.stringify(blog));
+      if (image) {
+        form.append("image", image);
+      }
+
+      const { data } = await api.post("/blogs", form);
+      if (data) {
+        toast.success("Blog Added to Draft");
+        setImage(null);
+        setFormData({ title: "", subTitle: "", category: "Startup" });
+        if (quillRef.current) {
+          quillRef.current.root.innerHTML = "";
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }finally{
+      setIsAdding(false)
+    }
   };
-
 
   useEffect(() => {
     if (!quillRef.current && editorRef.current) {
@@ -117,7 +153,9 @@ const AddBlog = () => {
           />
         </div>
 
-        <Button type="submit" className="mt-8 w-40 h-10 text-sm">Add Blog</Button>
+        <Button type="submit" className="mt-8 w-40 h-10 text-sm" disabled = {isAdding}>
+          {isAdding ? "Adding" : "Add Blog"}
+        </Button>
       </div>
     </form>
   );
