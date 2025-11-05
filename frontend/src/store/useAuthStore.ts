@@ -13,9 +13,7 @@ interface AuthState {
   isLoading: boolean;
   error: string | null;
 
- 
   login: (email: string, password: string) => Promise<boolean>;
-  
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -25,9 +23,6 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       isLoading: false,
       error: null,
-
-     
-
 
       login: async (email, password) => {
         set({ isLoading: true });
@@ -49,15 +44,13 @@ export const useAuthStore = create<AuthState>()(
           return false;
         }
       },
-
-      
     }),
     {
-      name: "auth-storage", 
+      name: "auth-storage",
       partialize: (state) => ({
         user: state.user,
         isAuthenticated: state.isAuthenticated,
-      }), 
+      }),
     }
   )
 );

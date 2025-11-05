@@ -1,5 +1,7 @@
 import { assets } from "@/assets/assets";
 import type { BlogData, CommentsData } from "@/pages/BlogPage";
+import { api } from "@/service/api";
+import { toast } from "sonner";
 
 interface CommentProps {
   comment: CommentsData;
@@ -7,8 +9,34 @@ interface CommentProps {
 }
 
 const CommentTable = ({ comment, fetchComments }: CommentProps) => {
-  const { blog, createdAt, _id, name, content } = comment;
+  const { blog, createdAt, name, content } = comment;
   const BlogDate = new Date(createdAt);
+
+  const handleApprove = async () => {
+    try {
+     await api.patch("/blogs/admin/comment", {id : comment._id})
+     toast.success("Comment Approved")
+     fetchComments()
+    } catch (error) {
+      console.log(error)
+      toast.error("Error")
+    }
+  }
+
+  const handleDelete = async () => {
+    const confirm = window.confirm("Are you sure you want to delete this blog?")
+      if(!confirm){
+        return
+      }
+    try {
+      await api.post("/blogs/admin/comment", {id : comment._id})
+      toast.success("Comment Deleted")
+      fetchComments()
+    } catch (error) {
+      console.log(error)
+      toast.error("Error")
+    }
+  }
 
   return (
     <tr className="order-y border-gray-300">
@@ -29,11 +57,13 @@ const CommentTable = ({ comment, fetchComments }: CommentProps) => {
             <img
               src={assets.tick_icon}
               className="w-5 hover:scale-110 transition-all cursor-pointer"
+              onClick={handleApprove}
+              
             />
           ) : (
             <p className="text-xs border border-green-600 bg-green-100 text-green-600 rounded-full px-3 py-1">Approved</p>
           )}
-          <img src= {assets.bin_icon} alt="" className="w-5 hover:scale-110 transition-all cursor-pointer"/>
+          <img src= {assets.bin_icon} alt="" className="w-5 hover:scale-110 transition-all cursor-pointer" onClick={handleDelete}/>
         </div>
       </td>
     </tr>

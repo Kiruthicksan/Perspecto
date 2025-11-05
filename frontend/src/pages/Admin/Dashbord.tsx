@@ -2,6 +2,7 @@ import { assets, dashboard_data } from "@/assets/assets"
 import { useEffect, useState } from "react"
 import type { BlogData } from "../BlogPage"
 import TableData from "@/components/Admin/TableData"
+import { api } from "@/service/api"
 
 
 interface DashboardData{
@@ -20,8 +21,13 @@ const Dashbord = () => {
     recentBlogs  : []
   })
 
-  const fetchDasboardData = () => {
-    setDashboardData(dashboard_data)
+  const fetchDasboardData = async () => {
+    try {
+      const {data} = await api.get('/admin/dashboard')
+      setDashboardData(data.dashboardData)
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   // useeffect for mounting on component load

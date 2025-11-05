@@ -60,6 +60,7 @@ const BlogPage = () => {
     try {
       const {data} = await api.get(`/blogs/${slug}`)
       setBlog(data.post)
+      fetchComments(data.post._id)
     } catch (error) {
       console.error(error)
     }
@@ -67,10 +68,11 @@ const BlogPage = () => {
 
   useEffect(() => {
     if (slug) fetchBlogData();
+    
   }, [slug]);
 
-  const fetchComments = async () => {
-    const {data} = await api.post("/blogs/comment",{blogId : blog?._id})
+  const fetchComments = async (blogId : string) => {
+    const {data} = await api.post("/blogs/comment",{blogId})
     setComments(data.comment)
     
   };
@@ -80,8 +82,9 @@ const BlogPage = () => {
     const {data} = await api.post("/blogs/add/comment" , payloadComment)
     if(data){
       setFormData({name : "", content: ""})
-      return toast.success("Comments Added for review")
-    
+       fetchComments(blog!._id);
+      toast.success("Comments Added for review")
+      
     }
    
   };
@@ -93,10 +96,7 @@ const BlogPage = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  useEffect(() => {
-    fetchBlogData();
-    fetchComments();
-  }, []);
+  
 
   return blog ? (
     <div className="relative">

@@ -24,7 +24,7 @@ const App = () => {
   useEffect(() => {
     fetchBlogs()
     fetchAllBlogs()
-  }, [fetchAllBlogs])
+  }, [])
  
  
   return (

@@ -2,13 +2,19 @@ import { useEffect, useState } from "react";
 import type { CommentsData } from "../BlogPage";
 import { comments_data } from "@/assets/assets";
 import CommentTable from "@/components/Admin/CommentTable";
+import { api } from "@/service/api";
 
 const Comments = () => {
   const [comments, setComments] = useState<CommentsData[]>([]);
   const [fitler, setFilter] = useState("Not Approved");
 
-  const fetchComments = () => {
-    setComments(comments_data);
+  const fetchComments = async () => {
+    try {
+      const {data} = await api.get('/blogs/admin/comments')
+      setComments(data.comment)
+    } catch (error) {
+      console.error(error)
+    }
   };
 
   useEffect(() => {
