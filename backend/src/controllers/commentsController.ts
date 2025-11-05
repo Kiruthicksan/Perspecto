@@ -7,12 +7,7 @@ export const addComment = async (req: Request, res: Response) => {
   try {
     const { blog, name, content } = req.body;
 
-    if (!blog || typeof blog !== "string" || blog.trim().length === 0) {
-      res.status(400).json({
-        message: "Blog ID is required and must be a non-empty string.",
-      });
-      return;
-    }
+  
 
     if (!name || typeof name !== "string" || name.trim().length === 0) {
       res.status(400).json({

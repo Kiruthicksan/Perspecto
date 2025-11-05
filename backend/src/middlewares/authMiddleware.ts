@@ -5,23 +5,22 @@ import jwt from "jsonwebtoken";
 export interface AuthenticatedRequest extends Request {
   user?: {
     email: string;
-    id?: string;
   };
 }
 
 const protect = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    const token = req.cookies?.token;
+    const token = req.cookies.token;
+   
 
     if (!token) {
       return res.status(401).json({ message: "Authorization denied. No token found." });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {email : string};
 
-    // Optionally attach decoded user info to req
-    if (typeof decoded === "object" && decoded && "email" in decoded) {
-      req.user = { email: decoded.email as string };
+    req.user = {
+       email: (decoded as any).email,
     }
 
     next();

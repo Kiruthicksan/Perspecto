@@ -1,3 +1,4 @@
+
 import { type Request, type Response } from "express";
 import { Post } from "../models/postModel.js";
 import fs from "fs";
@@ -132,7 +133,7 @@ export const getPostById = async (
   res: Response
 ): Promise<void> => {
   try {
-    const slug = req.params.slug;
+    const {slug} = req.params;
     const post = await Post.findOne({ slug });
     if (!post) {
       res.status(404).json({ message: "Post not found " });

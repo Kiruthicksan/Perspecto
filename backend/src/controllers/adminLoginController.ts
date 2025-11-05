@@ -3,6 +3,7 @@ import { genrateToken } from "../utils/generateToken.js";
 import { setAuthCookie } from "../utils/setAuthCookie.js";
 import { Post } from "../models/postModel.js";
 import Comment from "../models/commentModel.js";
+import type { AuthenticatedRequest } from "../middlewares/authMiddleware.js";
 
 export const adminLogin = async (
   req: Request,
@@ -78,3 +79,15 @@ export const getDashboard = async (
     });
   }
 };
+
+export const getUser = (req: AuthenticatedRequest, res: Response) => {
+  if(!req.user){
+    return res.status(401).json({message : "NOt authorized"})
+  }
+
+
+  res.status(200).json({
+    success: true,
+    user: req.user.email, 
+  });
+}
