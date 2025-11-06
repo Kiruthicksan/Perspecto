@@ -4,6 +4,7 @@ import { Post } from "../models/postModel.js";
 import fs from "fs";
 import imageKit from "../config/imagekit.js";
 import Comment from "../models/commentModel.js";
+import genrate from "../config/gemini.js";
 
 
 // ----------------------------- endpoint for creating a blog ----------------------------
@@ -204,3 +205,5 @@ export const getAllPost = async (req: Request, res: Response): Promise<void> => 
     });
   }
 };
+
+
