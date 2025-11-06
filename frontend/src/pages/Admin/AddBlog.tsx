@@ -5,6 +5,8 @@ import Quill from "quill";
 import { Button } from "@/components/ui/button";
 import { api } from "@/service/api";
 import { toast } from "sonner";
+import { parse } from "marked";
+
 
 export interface FormData {
   title: string;
@@ -16,6 +18,8 @@ const AddBlog = () => {
   const editorRef = useRef<HTMLDivElement | null>(null);
   const quillRef = useRef<Quill | null>(null);
 
+
+
   const [formData, setFormData] = useState({
     title: "",
     subTitle: "",
@@ -25,6 +29,25 @@ const AddBlog = () => {
   const [image, setImage] = useState<File | null>(null);
   const [isPublished, setIsPublished] = useState(false);
   const [isAdding, setIsAdding] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const genrateContent = async () => {
+    if (!formData.title) return toast.info("Title is Required");
+
+    try {
+      setIsLoading(true);
+      const { data } = await api.post("/generate", {
+        prompt: formData.title,
+      });
+      if (data && quillRef.current) {
+        quillRef.current.root.innerHTML = await parse(data.content);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -36,14 +59,13 @@ const AddBlog = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-
-      setIsAdding(true)
+      setIsAdding(true);
       const blog = {
         title: formData.title,
         subTitle: formData.subTitle,
         description: quillRef.current?.root.innerHTML,
         category: formData.category,
-        isPublished
+        isPublished,
       };
 
       const form = new FormData();
@@ -63,8 +85,8 @@ const AddBlog = () => {
       }
     } catch (error) {
       console.error(error);
-    }finally{
-      setIsAdding(false)
+    } finally {
+      setIsAdding(false);
     }
   };
 
@@ -122,8 +144,10 @@ const AddBlog = () => {
           <button
             type="button"
             className="absolute right-2 bottom-1 ml-2 text-xs text-white bg-black/70 px-4 py-1.5 rounded-2xl hover:underline cursor-pointer"
+            onClick={genrateContent}
+            disabled = {isLoading}
           >
-            Generate with AI
+            {isLoading ? "Generating" : "Generate with AI" }
           </button>
         </div>
 
@@ -153,7 +177,11 @@ const AddBlog = () => {
           />
         </div>
 
-        <Button type="submit" className="mt-8 w-40 h-10 text-sm" disabled = {isAdding}>
+        <Button
+          type="submit"
+          className="mt-8 w-40 h-10 text-sm"
+          disabled={isAdding}
+        >
           {isAdding ? "Adding" : "Add Blog"}
         </Button>
       </div>
