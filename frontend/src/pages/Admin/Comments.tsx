@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import type { CommentsData } from "../BlogPage";
-import { comments_data } from "@/assets/assets";
 import CommentTable from "@/components/Admin/CommentTable";
 import { api } from "@/service/api";
 

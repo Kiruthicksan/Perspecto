@@ -15,7 +15,7 @@ interface BlogCardProps {
 }
 
 const BlogCard: React.FC<BlogCardProps> = ({ blog }) => {
-  const { title, description, category, image, slug } = blog;
+  const { title, category, image, slug } = blog;
 
   const navigate = useNavigate();
   return (

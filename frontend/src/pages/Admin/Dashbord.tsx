@@ -1,4 +1,4 @@
-import { assets, dashboard_data } from "@/assets/assets"
+import { assets } from "@/assets/assets"
 import { useEffect, useState } from "react"
 import type { BlogData } from "../BlogPage"
 import TableData from "@/components/Admin/TableData"

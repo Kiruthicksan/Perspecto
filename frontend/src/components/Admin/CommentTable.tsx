@@ -1,5 +1,5 @@
 import { assets } from "@/assets/assets";
-import type { BlogData, CommentsData } from "@/pages/BlogPage";
+import type { CommentsData } from "@/pages/BlogPage";
 import { api } from "@/service/api";
 import { toast } from "sonner";
 
